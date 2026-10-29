@@ -33,8 +33,10 @@ export class AuthController {
 
   static async verifyEmail(req: Request, res: Response, next: NextFunction) {
     try {
-      const token = (req.params.token || req.query.token) as string;
-      const result = await AuthService.verifyEmail(token);
+      const tokenOrCode = (req.body?.code || req.body?.token || req.params?.token || req.query?.token || req.query?.code) as string;
+      const email = (req.body?.email || req.query?.email) as string | undefined;
+
+      const result = await AuthService.verifyEmail(tokenOrCode, email);
 
       return sendResponse(
         res,

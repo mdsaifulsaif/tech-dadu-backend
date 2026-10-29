@@ -27,26 +27,51 @@ const createTransporter = () => {
   return null;
 };
 
+const getClientUrl = (): string => {
+  const raw = process.env.CLIENT_URL || "http://localhost:3001";
+  return raw.includes(",") ? raw.split(",")[0].trim() : raw.trim();
+};
+
 export const sendVerificationEmail = async (
   email: string,
   name: string,
-  rawToken: string
+  rawCode: string
 ): Promise<void> => {
-  const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
-  const verificationUrl = `${clientUrl}/verify-email?token=${rawToken}`;
+  const clientUrl = getClientUrl();
+  const verificationUrl = `${clientUrl}/verify-email?code=${rawCode}&email=${encodeURIComponent(email)}`;
   const transporter = createTransporter();
 
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
-      <h2 style="color: #0f172a; margin-bottom: 16px;">Verify Your Email Address</h2>
-      <p style="color: #475569; font-size: 16px; line-height: 24px;">Hi ${name},</p>
-      <p style="color: #475569; font-size: 16px; line-height: 24px;">Thank you for registering on Tech Dadu. Please verify your email address to complete your registration and activate your account.</p>
-      <div style="text-align: center; margin: 32px 0;">
-        <a href="${verificationUrl}" style="background-color: #2563eb; color: #ffffff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; display: inline-block;">Verify Email</a>
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 580px; margin: auto; padding: 32px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #0f172a;">
+      <div style="margin-bottom: 24px; text-align: center;">
+        <span style="font-size: 20px; font-weight: 800; color: #4f46e5;">Tech<span style="color: #0ea5e9;">Dadu</span></span>
       </div>
-      <p style="color: #64748b; font-size: 14px;">This link will expire in 24 hours. If you did not create this account, please ignore this email.</p>
+      <h2 style="color: #0f172a; margin-bottom: 12px; font-size: 22px; font-weight: 700; text-align: center;">Verify Your Email Address</h2>
+      <p style="color: #475569; font-size: 15px; line-height: 24px; text-align: center;">
+        Hi <strong>${name}</strong>, use the 6-digit verification code below to activate your account:
+      </p>
+
+      <div style="text-align: center; margin: 28px 0;">
+        <div style="display: inline-block; background-color: #f8fafc; border: 2px dashed #4f46e5; border-radius: 12px; padding: 16px 32px;">
+          <span style="font-size: 34px; font-weight: 800; letter-spacing: 10px; color: #4f46e5; font-family: 'Courier New', Courier, monospace; margin-left: 10px;">
+            ${rawCode}
+          </span>
+        </div>
+        <p style="color: #94a3b8; font-size: 13px; margin-top: 10px;">This code expires in 60 minutes.</p>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 28px;">
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 12px;">Or verify automatically with a single click:</p>
+        <a href="${verificationUrl}" style="background-color: #4f46e5; color: #ffffff; padding: 11px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; display: inline-block;">
+          Verify Instantly
+        </a>
+      </div>
+
       <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 24px 0;" />
-      <p style="color: #94a3b8; font-size: 12px; text-align: center;">Tech Dadu &bull; Secure Authentication Service</p>
+      <p style="color: #94a3b8; font-size: 12px; text-align: center; line-height: 18px;">
+        If you didn't create an account with Tech Dadu, you can safely ignore this email.<br />
+        &copy; ${new Date().getFullYear()} Tech Dadu. Secure Auth Service.
+      </p>
     </div>
   `;
 
@@ -55,17 +80,18 @@ export const sendVerificationEmail = async (
       await transporter.sendMail({
         from: process.env.EMAIL_FROM || '"Tech Dadu" <no-reply@techdadu.com>',
         to: email,
-        subject: "Verify Your Email Address - Tech Dadu",
+        subject: `${rawCode} is your Tech Dadu verification code`,
         html,
       });
-      console.log(`[EMAIL] Verification email sent to ${email}`);
+      console.log(`[EMAIL] 6-digit verification code sent to ${email}`);
     } catch (err) {
       console.error("[EMAIL ERROR] Failed to send email via SMTP:", err);
     }
   } else {
     console.log("-----------------------------------------");
     console.log(`[EMAIL SIMULATION] To: ${email}`);
-    console.log(`[EMAIL SIMULATION] Verification Link: ${verificationUrl}`);
+    console.log(`[EMAIL SIMULATION] 6-Digit Code: ${rawCode}`);
+    console.log(`[EMAIL SIMULATION] Instant Link: ${verificationUrl}`);
     console.log("-----------------------------------------");
   }
 };
@@ -75,7 +101,7 @@ export const sendPasswordResetEmail = async (
   name: string,
   rawToken: string
 ): Promise<void> => {
-  const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+  const clientUrl = getClientUrl();
   const resetUrl = `${clientUrl}/reset-password?token=${rawToken}`;
   const transporter = createTransporter();
 

@@ -7,6 +7,7 @@ import {
   generateRefreshToken,
   verifyRefreshToken,
   generateRandomToken,
+  generate6DigitCode,
   hashToken,
 } from "../utils/jwt";
 import {
@@ -27,8 +28,8 @@ export class AuthService {
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const { rawToken, hashedToken } = generateRandomToken();
-    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    const { rawCode, hashedCode } = generate6DigitCode();
+    const verificationExpires = new Date(Date.now() + 60 * 60 * 1000); // 60 minutes
 
     const newUser = await User.create({
       name,
@@ -36,11 +37,11 @@ export class AuthService {
       password: hashedPassword,
       provider: "credentials",
       isVerified: false,
-      verificationToken: hashedToken,
+      verificationToken: hashedCode,
       verificationTokenExpires: verificationExpires,
     });
 
-    await sendVerificationEmail(email, name, rawToken);
+    await sendVerificationEmail(email, name, rawCode);
 
     return {
       userId: newUser._id,
@@ -50,17 +51,34 @@ export class AuthService {
     };
   }
 
-  // Verify email address
-  static async verifyEmail(token: string) {
-    const hashed = hashToken(token);
+  // Verify email address with 6-digit code or token
+  static async verifyEmail(codeOrToken: string, email?: string) {
+    if (!codeOrToken) {
+      throw new ApiError(400, "6-digit verification code is required");
+    }
 
-    const user = await User.findOne({
+    const hashed = hashToken(codeOrToken.trim());
+
+    const filter: Record<string, any> = {
       verificationToken: hashed,
       verificationTokenExpires: { $gt: new Date() },
-    }).select("+verificationToken +verificationTokenExpires");
+    };
+
+    if (email) {
+      filter.email = email.toLowerCase().trim();
+    }
+
+    let user = await User.findOne(filter).select("+verificationToken +verificationTokenExpires");
+
+    if (!user && email) {
+      user = await User.findOne({
+        verificationToken: hashed,
+        verificationTokenExpires: { $gt: new Date() },
+      }).select("+verificationToken +verificationTokenExpires");
+    }
 
     if (!user) {
-      throw new ApiError(400, "Invalid or expired verification token");
+      throw new ApiError(400, "Invalid or expired 6-digit verification code");
     }
 
     user.isVerified = true;
@@ -82,12 +100,12 @@ export class AuthService {
       throw new ApiError(400, "This email is already verified. You can log in.");
     }
 
-    const { rawToken, hashedToken } = generateRandomToken();
-    user.verificationToken = hashedToken;
-    user.verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const { rawCode, hashedCode } = generate6DigitCode();
+    user.verificationToken = hashedCode;
+    user.verificationTokenExpires = new Date(Date.now() + 60 * 60 * 1000);
     await user.save();
 
-    await sendVerificationEmail(user.email, user.name, rawToken);
+    await sendVerificationEmail(user.email, user.name, rawCode);
     return { email: user.email };
   }
 

@@ -32,6 +32,13 @@ export const verifyRefreshToken = (token: string): ITokenPayload => {
   return jwt.verify(token, REFRESH_SECRET) as ITokenPayload;
 };
 
+// Generates a random 6-digit numeric OTP and its sha256 hash
+export const generate6DigitCode = () => {
+  const code = crypto.randomInt(100000, 1000000).toString();
+  const hashedCode = hashToken(code);
+  return { rawCode: code, hashedCode };
+};
+
 // Generates a random crypto hex string and its sha256 hash
 export const generateRandomToken = () => {
   const rawToken = crypto.randomBytes(32).toString("hex");
