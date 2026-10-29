@@ -227,6 +227,28 @@ Crucial for optimizing Pinterest pins that actually convert into earnings:
 
 ---
 
+### 8. `SiteSetting` (Dynamic GTM, GA4, Meta Pixel, Pinterest & SEO Config) [✅ COMPLETED]
+Allows changing tracking IDs and meta tags dynamically from Admin Dashboard:
+- `siteName`: string
+- `siteTagline`: string
+- `siteDescription`: string
+- `siteUrl`: string
+- `logoUrl`?: string
+- `faviconUrl`?: string
+- `defaultOgImage`?: string
+- `socialLinks`: { pinterest, github, twitter, youtube, facebook, linkedin }
+- `analytics`:
+  - `gtmId`: string (e.g., "GTM-XXXXXXX")
+  - `gaId`: string (e.g., "G-XXXXXXXXXX")
+  - `metaPixelId`: string
+  - `pinterestTagId`: string
+  - `pinterestVerification`: string (Pinterest domain claim meta tag)
+  - `googleVerification`: string (Google search console verification)
+- `announcement`: { enabled, text, link }
+- `timestamps`: true
+
+---
+
 ## 🗺️ Step-by-Step Implementation Roadmap
 
 ```text
@@ -244,19 +266,21 @@ Phase 2: Categories & Affiliate Product Showcase [✅ COMPLETED]
   ├── Filter by category, price, staff pick, search, pagination
   └── Admin CRUD for Categories & Products (Role Protected)
 
-Phase 3: SEO-Optimized Blog & Listicle Engine [NEXT]
+Phase 3: SEO-Optimized Blog & Listicle Engine [✅ COMPLETED]
   ├── Blog Model with Dynamic Product Linking
-  ├── Reading time calculator & markdown support
-  ├── View count tracking & related posts
-  └── OpenGraph / Pinterest Rich Pin metadata endpoints
+  ├── Reading time auto-calculator & markdown support
+  ├── View count tracking & related posts engine
+  └── Category, Tag & Keyword SEO filters
 
-Phase 4: Digital Templates & Freebies Showcase
-  ├── DigitalProduct Model with Live Demo & Gumroad/Lemon Squeezy URLs
-  ├── Tech stack tagging (Next.js, MERN, Tailwind)
-  └── Download/Click tracking
+Phase 4: Digital Templates & Freebies Showcase [✅ COMPLETED]
+  ├── DigitalProduct Model with Live Demo & Purchase URLs
+  ├── Tech stack tagging (Next.js, MERN, Tailwind, TypeScript)
+  ├── Free vs Paid filter & download/action tracking
+  └── Admin CRUD & Zod validation
 
-Phase 5: Newsletter & Pinterest Growth Automation
-  ├── Subscriber Model & Newsletter API
-  ├── RSS/JSON feed for Pinterest auto-pinning
-  └── Dynamic sitemap data generator for Google SEO
+Phase 5: Newsletter & Pinterest Growth Automation [✅ COMPLETED]
+  ├── Subscriber Model & Welcome Email Service
+  ├── Newsletter Subscription & Admin Broadcast API
+  ├── Valid RSS 2.0 Media Feed for Pinterest Auto-Pinning (/api/feeds/pinterest.xml)
+  └── Dynamic XML Sitemap Generator for Google Search Console (/api/feeds/sitemap.xml)
 ```
