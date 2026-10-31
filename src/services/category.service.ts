@@ -19,7 +19,33 @@ export class CategoryService {
     return category;
   }
 
+  static async ensureDefaultCategories() {
+    const defaults: Array<{
+      name: string;
+      slug: string;
+      type: "template" | "product" | "blog";
+      description: string;
+      order: number;
+    }> = [
+      { name: "Web Templates", slug: "web-templates", type: "template", description: "Next.js, React & full-stack web application templates", order: 1 },
+      { name: "UI/UX Design", slug: "ui-ux-design", type: "template", description: "Figma UI kits, design systems, and mobile wireframes", order: 2 },
+      { name: "Mobile App Kits", slug: "mobile-app-kits", type: "template", description: "iOS & Android Flutter/React Native UI kits", order: 3 },
+      { name: "Desk Setup Gear", slug: "desk-setup-gear", type: "product", description: "Keyboards, monitors, desks and workspace gadgets", order: 1 },
+      { name: "Tech Guides", slug: "tech-guides", type: "blog", description: "Tutorials, listicles, and hardware reviews", order: 1 },
+    ];
+
+    for (const cat of defaults) {
+      const exists = await Category.findOne({ slug: cat.slug });
+      if (!exists) {
+        await Category.create(cat);
+      }
+    }
+  }
+
   static async getAllCategories(type?: string) {
+    // Ensure default starter categories exist
+    await this.ensureDefaultCategories().catch(() => {});
+
     const query: Record<string, any> = {};
     if (type && type !== "all") {
       query.$or = [{ type }, { type: "all" }];

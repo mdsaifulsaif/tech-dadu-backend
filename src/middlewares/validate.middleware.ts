@@ -110,7 +110,7 @@ export const createDigitalProductSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters").max(200),
   slug: z.string().optional(),
   category: z.string().min(1, "Category ID is required"),
-  shortSummary: z.string().min(10, "Short summary must be at least 10 characters").max(300),
+  shortSummary: z.string().max(300).optional(),
   description: z.string().min(20, "Description must be at least 20 characters"),
   features: z.array(z.string()).optional(),
   techStack: z.array(z.string()).min(1, "At least one tech stack item is required"),

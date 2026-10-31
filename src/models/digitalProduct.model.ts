@@ -54,7 +54,7 @@ const digitalProductSchema = new Schema<IDigitalProduct>(
     },
     shortSummary: {
       type: String,
-      required: [true, "Short summary is required"],
+      default: "",
       maxlength: [300, "Short summary cannot exceed 300 characters"],
     },
     description: {

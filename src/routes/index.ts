@@ -8,6 +8,7 @@ import digitalProductRoutes from "./digitalProduct.routes";
 import subscriberRoutes from "./subscriber.routes";
 import feedRoutes from "./feed.routes";
 import siteSettingRoutes from "./siteSetting.routes";
+import analyticsRoutes from "./analytics.routes";
 
 const router = Router();
 
@@ -18,7 +19,9 @@ router.use("/upload", uploadRoutes);
 router.use("/blogs", blogRoutes);
 router.use("/templates", digitalProductRoutes);
 router.use("/newsletter", subscriberRoutes);
+router.use("/subscribers", subscriberRoutes);
 router.use("/feeds", feedRoutes);
 router.use("/settings", siteSettingRoutes);
+router.use("/analytics", analyticsRoutes);
 
 export default router;
