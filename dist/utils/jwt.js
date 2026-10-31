@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hashToken = exports.generateRandomToken = exports.verifyRefreshToken = exports.verifyAccessToken = exports.generateRefreshToken = exports.generateAccessToken = void 0;
+exports.hashToken = exports.generateRandomToken = exports.generate6DigitCode = exports.verifyRefreshToken = exports.verifyAccessToken = exports.generateRefreshToken = exports.generateAccessToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const crypto_1 = __importDefault(require("crypto"));
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "access_secret_tech_dadu_fallback_key";
@@ -30,6 +30,13 @@ const verifyRefreshToken = (token) => {
     return jsonwebtoken_1.default.verify(token, REFRESH_SECRET);
 };
 exports.verifyRefreshToken = verifyRefreshToken;
+// Generates a random 6-digit numeric OTP and its sha256 hash
+const generate6DigitCode = () => {
+    const code = crypto_1.default.randomInt(100000, 1000000).toString();
+    const hashedCode = (0, exports.hashToken)(code);
+    return { rawCode: code, hashedCode };
+};
+exports.generate6DigitCode = generate6DigitCode;
 // Generates a random crypto hex string and its sha256 hash
 const generateRandomToken = () => {
     const rawToken = crypto_1.default.randomBytes(32).toString("hex");

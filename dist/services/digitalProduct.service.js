@@ -21,8 +21,10 @@ class DigitalProductService {
         if (existing) {
             throw new ApiError_1.ApiError(400, `Template with slug '${slug}' already exists`);
         }
+        const shortSummary = data.shortSummary || data.description?.slice(0, 160) || data.title;
         const digitalProduct = await digitalProduct_model_1.DigitalProduct.create({
             ...data,
+            shortSummary,
             slug,
             isFree: data.price === 0,
         });

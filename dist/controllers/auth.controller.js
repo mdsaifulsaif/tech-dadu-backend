@@ -24,8 +24,9 @@ class AuthController {
     }
     static async verifyEmail(req, res, next) {
         try {
-            const token = (req.params.token || req.query.token);
-            const result = await auth_service_1.AuthService.verifyEmail(token);
+            const tokenOrCode = (req.body?.code || req.body?.token || req.params?.token || req.query?.token || req.query?.code);
+            const email = (req.body?.email || req.query?.email);
+            const result = await auth_service_1.AuthService.verifyEmail(tokenOrCode, email);
             return (0, response_1.sendResponse)(res, 200, true, "Email verified successfully. You can now log in.", result);
         }
         catch (error) {

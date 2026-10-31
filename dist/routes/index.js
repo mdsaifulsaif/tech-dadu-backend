@@ -13,6 +13,7 @@ const digitalProduct_routes_1 = __importDefault(require("./digitalProduct.routes
 const subscriber_routes_1 = __importDefault(require("./subscriber.routes"));
 const feed_routes_1 = __importDefault(require("./feed.routes"));
 const siteSetting_routes_1 = __importDefault(require("./siteSetting.routes"));
+const analytics_routes_1 = __importDefault(require("./analytics.routes"));
 const router = (0, express_1.Router)();
 router.use("/auth", auth_routes_1.default);
 router.use("/categories", category_routes_1.default);
@@ -21,6 +22,8 @@ router.use("/upload", upload_routes_1.default);
 router.use("/blogs", blog_routes_1.default);
 router.use("/templates", digitalProduct_routes_1.default);
 router.use("/newsletter", subscriber_routes_1.default);
+router.use("/subscribers", subscriber_routes_1.default);
 router.use("/feeds", feed_routes_1.default);
 router.use("/settings", siteSetting_routes_1.default);
+router.use("/analytics", analytics_routes_1.default);
 exports.default = router;

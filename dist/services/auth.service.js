@@ -20,18 +20,18 @@ class AuthService {
         }
         const salt = await bcryptjs_1.default.genSalt(12);
         const hashedPassword = await bcryptjs_1.default.hash(password, salt);
-        const { rawToken, hashedToken } = (0, jwt_1.generateRandomToken)();
-        const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+        const { rawCode, hashedCode } = (0, jwt_1.generate6DigitCode)();
+        const verificationExpires = new Date(Date.now() + 60 * 60 * 1000); // 60 minutes
         const newUser = await user_model_1.User.create({
             name,
             email,
             password: hashedPassword,
             provider: "credentials",
             isVerified: false,
-            verificationToken: hashedToken,
+            verificationToken: hashedCode,
             verificationTokenExpires: verificationExpires,
         });
-        await (0, email_service_1.sendVerificationEmail)(email, name, rawToken);
+        await (0, email_service_1.sendVerificationEmail)(email, name, rawCode);
         return {
             userId: newUser._id,
             name: newUser.name,
@@ -39,15 +39,28 @@ class AuthService {
             isVerified: newUser.isVerified,
         };
     }
-    // Verify email address
-    static async verifyEmail(token) {
-        const hashed = (0, jwt_1.hashToken)(token);
-        const user = await user_model_1.User.findOne({
+    // Verify email address with 6-digit code or token
+    static async verifyEmail(codeOrToken, email) {
+        if (!codeOrToken) {
+            throw new ApiError_1.ApiError(400, "6-digit verification code is required");
+        }
+        const hashed = (0, jwt_1.hashToken)(codeOrToken.trim());
+        const filter = {
             verificationToken: hashed,
             verificationTokenExpires: { $gt: new Date() },
-        }).select("+verificationToken +verificationTokenExpires");
+        };
+        if (email) {
+            filter.email = email.toLowerCase().trim();
+        }
+        let user = await user_model_1.User.findOne(filter).select("+verificationToken +verificationTokenExpires");
+        if (!user && email) {
+            user = await user_model_1.User.findOne({
+                verificationToken: hashed,
+                verificationTokenExpires: { $gt: new Date() },
+            }).select("+verificationToken +verificationTokenExpires");
+        }
         if (!user) {
-            throw new ApiError_1.ApiError(400, "Invalid or expired verification token");
+            throw new ApiError_1.ApiError(400, "Invalid or expired 6-digit verification code");
         }
         user.isVerified = true;
         user.verificationToken = undefined;
@@ -64,11 +77,11 @@ class AuthService {
         if (user.isVerified) {
             throw new ApiError_1.ApiError(400, "This email is already verified. You can log in.");
         }
-        const { rawToken, hashedToken } = (0, jwt_1.generateRandomToken)();
-        user.verificationToken = hashedToken;
-        user.verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        const { rawCode, hashedCode } = (0, jwt_1.generate6DigitCode)();
+        user.verificationToken = hashedCode;
+        user.verificationTokenExpires = new Date(Date.now() + 60 * 60 * 1000);
         await user.save();
-        await (0, email_service_1.sendVerificationEmail)(user.email, user.name, rawToken);
+        await (0, email_service_1.sendVerificationEmail)(user.email, user.name, rawCode);
         return { email: user.email };
     }
     // Login with credentials

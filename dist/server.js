@@ -12,10 +12,27 @@ const routes_1 = __importDefault(require("./routes"));
 const error_middleware_1 = require("./middlewares/error.middleware");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+const defaultAllowedOrigins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "http://localhost:3003",
+];
+const envOrigins = process.env.CLIENT_URL
+    ? process.env.CLIENT_URL.split(",").map((url) => url.trim())
+    : [];
+const allowedOrigins = Array.from(new Set([...defaultAllowedOrigins, ...envOrigins]));
 // Middlewares
 app.use((0, cors_1.default)({
-    origin: clientUrl,
+    origin: (origin, callback) => {
+        // allow requests with no origin (like mobile apps, curl, or server-to-server)
+        if (!origin || allowedOrigins.includes(origin) || /^http:\/\/localhost:(3000|3001|3002|3003)$/.test(origin)) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error(`Origin ${origin} not allowed by CORS`));
+        }
+    },
     credentials: true,
 }));
 app.use((0, cookie_parser_1.default)());

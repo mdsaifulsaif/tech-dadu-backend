@@ -97,7 +97,7 @@ exports.createDigitalProductSchema = zod_1.z.object({
     title: zod_1.z.string().min(3, "Title must be at least 3 characters").max(200),
     slug: zod_1.z.string().optional(),
     category: zod_1.z.string().min(1, "Category ID is required"),
-    shortSummary: zod_1.z.string().min(10, "Short summary must be at least 10 characters").max(300),
+    shortSummary: zod_1.z.string().max(300).optional(),
     description: zod_1.z.string().min(20, "Description must be at least 20 characters"),
     features: zod_1.z.array(zod_1.z.string()).optional(),
     techStack: zod_1.z.array(zod_1.z.string()).min(1, "At least one tech stack item is required"),
