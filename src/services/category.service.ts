@@ -26,12 +26,14 @@ export class CategoryService {
       type: "template" | "product" | "blog";
       description: string;
       order: number;
+      showInHero?: boolean;
+      isDefaultHero?: boolean;
     }> = [
-      { name: "Web Templates", slug: "web-templates", type: "template", description: "Next.js, React & full-stack web application templates", order: 1 },
-      { name: "UI/UX Design", slug: "ui-ux-design", type: "template", description: "Figma UI kits, design systems, and mobile wireframes", order: 2 },
-      { name: "Mobile App Kits", slug: "mobile-app-kits", type: "template", description: "iOS & Android Flutter/React Native UI kits", order: 3 },
-      { name: "Desk Setup Gear", slug: "desk-setup-gear", type: "product", description: "Keyboards, monitors, desks and workspace gadgets", order: 1 },
-      { name: "Tech Guides", slug: "tech-guides", type: "blog", description: "Tutorials, listicles, and hardware reviews", order: 1 },
+      { name: "Desk Setup Gear", slug: "desk-setup-gear", type: "product", description: "Keyboards, monitors, desks and workspace gadgets", order: 1, showInHero: true, isDefaultHero: true },
+      { name: "Web Templates", slug: "web-templates", type: "template", description: "Next.js, React & full-stack web application templates", order: 2, showInHero: true, isDefaultHero: false },
+      { name: "UI/UX Design", slug: "ui-ux-design", type: "template", description: "Figma UI kits, design systems, and mobile wireframes", order: 3, showInHero: true, isDefaultHero: false },
+      { name: "Mobile App Kits", slug: "mobile-app-kits", type: "template", description: "iOS & Android Flutter/React Native UI kits", order: 4, showInHero: false, isDefaultHero: false },
+      { name: "Tech Guides", slug: "tech-guides", type: "blog", description: "Tutorials, listicles, and hardware reviews", order: 5, showInHero: false, isDefaultHero: false },
     ];
 
     for (const cat of defaults) {
@@ -42,13 +44,16 @@ export class CategoryService {
     }
   }
 
-  static async getAllCategories(type?: string) {
+  static async getAllCategories(type?: string, heroOnly?: boolean) {
     // Ensure default starter categories exist
     await this.ensureDefaultCategories().catch(() => {});
 
     const query: Record<string, any> = {};
     if (type && type !== "all") {
       query.$or = [{ type }, { type: "all" }];
+    }
+    if (heroOnly) {
+      query.showInHero = true;
     }
 
     return await Category.find(query).sort({ order: 1, name: 1 }).lean();

@@ -9,6 +9,7 @@ import subscriberRoutes from "./subscriber.routes";
 import feedRoutes from "./feed.routes";
 import siteSettingRoutes from "./siteSetting.routes";
 import analyticsRoutes from "./analytics.routes";
+import searchRoutes from "./search.routes";
 
 const router = Router();
 
@@ -23,5 +24,6 @@ router.use("/subscribers", subscriberRoutes);
 router.use("/feeds", feedRoutes);
 router.use("/settings", siteSettingRoutes);
 router.use("/analytics", analyticsRoutes);
+router.use("/search", searchRoutes);
 
 export default router;

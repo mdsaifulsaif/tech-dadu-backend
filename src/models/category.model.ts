@@ -8,6 +8,8 @@ export interface ICategory extends Document {
   image?: string;
   type: "product" | "blog" | "template" | "all";
   order: number;
+  showInHero: boolean;
+  isDefaultHero: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -49,6 +51,15 @@ const categorySchema = new Schema<ICategory>(
     order: {
       type: Number,
       default: 0,
+    },
+    showInHero: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    isDefaultHero: {
+      type: Boolean,
+      default: false,
     },
   },
   {
