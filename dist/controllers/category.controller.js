@@ -15,8 +15,9 @@ class CategoryController {
     }
     static async getAll(req, res, next) {
         try {
-            const { type } = req.query;
-            const categories = await category_service_1.CategoryService.getAllCategories(type);
+            const { type, hero } = req.query;
+            const isHero = hero === "true" || hero === "1";
+            const categories = await category_service_1.CategoryService.getAllCategories(type, isHero);
             return (0, response_1.sendResponse)(res, 200, true, "Categories retrieved successfully", categories);
         }
         catch (error) {

@@ -39,6 +39,15 @@ const categorySchema = new mongoose_1.Schema({
         type: Number,
         default: 0,
     },
+    showInHero: {
+        type: Boolean,
+        default: false,
+        index: true,
+    },
+    isDefaultHero: {
+        type: Boolean,
+        default: false,
+    },
 }, {
     timestamps: true,
 });
