@@ -10,6 +10,7 @@ export interface IDigitalProductFilters {
   techStack?: string;
   isFree?: boolean;
   isFeatured?: boolean;
+  isComparison?: boolean;
   search?: string;
   status?: "draft" | "published" | "all";
   sort?: "newest" | "price-asc" | "price-desc" | "popular";
@@ -85,6 +86,10 @@ export class DigitalProductService {
 
     if (isFeatured !== undefined) {
       query.isFeatured = isFeatured;
+    }
+
+    if (filters.isComparison !== undefined) {
+      query["comparison.isFeatured"] = filters.isComparison;
     }
 
     if (search) {

@@ -15,12 +15,13 @@ class DigitalProductController {
     }
     static async getAll(req, res, next) {
         try {
-            const { category, techStack, isFree, isFeatured, search, status, sort, page, limit, } = req.query;
+            const { category, techStack, isFree, isFeatured, isComparison, search, status, sort, page, limit, } = req.query;
             const filters = {
                 category: category,
                 techStack: techStack,
                 isFree: isFree !== undefined ? isFree === "true" : undefined,
                 isFeatured: isFeatured !== undefined ? isFeatured === "true" : undefined,
+                isComparison: isComparison !== undefined ? isComparison === "true" : undefined,
                 search: search,
                 status: status,
                 sort: sort,

@@ -89,6 +89,12 @@ const productSchema = new mongoose_1.Schema({
         default: false,
         index: true,
     },
+    comparison: {
+        isFeatured: { type: Boolean, default: false, index: true },
+        badge: { type: String, default: "Best Overall" },
+        bestFor: { type: String, default: "Everyday use" },
+        keyHighlight: { type: String, default: "" },
+    },
     status: {
         type: String,
         enum: ["draft", "published"],

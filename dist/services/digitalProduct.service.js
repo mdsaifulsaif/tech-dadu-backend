@@ -56,6 +56,9 @@ class DigitalProductService {
         if (isFeatured !== undefined) {
             query.isFeatured = isFeatured;
         }
+        if (filters.isComparison !== undefined) {
+            query["comparison.isFeatured"] = filters.isComparison;
+        }
         if (search) {
             const searchRegex = new RegExp(search, "i");
             query.$or = [

@@ -19,6 +19,13 @@ export interface IProductPrice {
   formatted?: string;
 }
 
+export interface IProductComparison {
+  isFeatured?: boolean;
+  badge?: string;
+  bestFor?: string;
+  keyHighlight?: string;
+}
+
 export interface IProduct extends Document {
   title: string;
   slug: string;
@@ -33,6 +40,7 @@ export interface IProduct extends Document {
   cons: string[];
   badges: string[];
   isFeatured: boolean;
+  comparison?: IProductComparison;
   status: "draft" | "published";
   clickCount: number;
   seo: IProductSEO;
@@ -131,6 +139,12 @@ const productSchema = new Schema<IProduct>(
       type: Boolean,
       default: false,
       index: true,
+    },
+    comparison: {
+      isFeatured: { type: Boolean, default: false, index: true },
+      badge: { type: String, default: "Best Overall" },
+      bestFor: { type: String, default: "Everyday use" },
+      keyHighlight: { type: String, default: "" },
     },
     status: {
       type: String,

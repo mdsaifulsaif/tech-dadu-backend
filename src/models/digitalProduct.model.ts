@@ -7,6 +7,13 @@ export interface IDigitalProductSEO {
   keywords?: string[];
 }
 
+export interface IDigitalProductComparison {
+  isFeatured?: boolean;
+  badge?: string;
+  bestFor?: string;
+  keyHighlight?: string;
+}
+
 export interface IDigitalProduct extends Document {
   title: string;
   slug: string;
@@ -22,6 +29,7 @@ export interface IDigitalProduct extends Document {
   previewImages: string[];
   downloadCount: number;
   isFeatured: boolean;
+  comparison?: IDigitalProductComparison;
   badges: string[];
   status: "draft" | "published";
   seo: IDigitalProductSEO;
@@ -101,6 +109,12 @@ const digitalProductSchema = new Schema<IDigitalProduct>(
       type: Boolean,
       default: false,
       index: true,
+    },
+    comparison: {
+      isFeatured: { type: Boolean, default: false, index: true },
+      badge: { type: String, default: "Best Overall" },
+      bestFor: { type: String, default: "" },
+      keyHighlight: { type: String, default: "" },
     },
     badges: {
       type: [String],

@@ -74,6 +74,12 @@ const digitalProductSchema = new mongoose_1.Schema({
         default: false,
         index: true,
     },
+    comparison: {
+        isFeatured: { type: Boolean, default: false, index: true },
+        badge: { type: String, default: "Best Overall" },
+        bestFor: { type: String, default: "" },
+        keyHighlight: { type: String, default: "" },
+    },
     badges: {
         type: [String],
         default: [],

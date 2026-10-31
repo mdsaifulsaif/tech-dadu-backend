@@ -55,6 +55,9 @@ class ProductService {
         if (isFeatured !== undefined) {
             query.isFeatured = isFeatured;
         }
+        if (filters.isComparison !== undefined) {
+            query["comparison.isFeatured"] = filters.isComparison;
+        }
         if (badge) {
             query.badges = { $in: [badge] };
         }

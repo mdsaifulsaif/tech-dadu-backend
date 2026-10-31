@@ -9,6 +9,7 @@ export interface IProductQueryFilters {
   category?: string;
   search?: string;
   isFeatured?: boolean;
+  isComparison?: boolean;
   badge?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -83,6 +84,10 @@ export class ProductService {
 
     if (isFeatured !== undefined) {
       query.isFeatured = isFeatured;
+    }
+
+    if (filters.isComparison !== undefined) {
+      query["comparison.isFeatured"] = filters.isComparison;
     }
 
     if (badge) {

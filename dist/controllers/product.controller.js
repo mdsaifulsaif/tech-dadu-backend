@@ -15,11 +15,12 @@ class ProductController {
     }
     static async getAll(req, res, next) {
         try {
-            const { category, search, isFeatured, badge, minPrice, maxPrice, status, sort, page, limit, } = req.query;
+            const { category, search, isFeatured, isComparison, badge, minPrice, maxPrice, status, sort, page, limit, } = req.query;
             const filters = {
                 category: category,
                 search: search,
                 isFeatured: isFeatured !== undefined ? isFeatured === "true" : undefined,
+                isComparison: isComparison !== undefined ? isComparison === "true" : undefined,
                 badge: badge,
                 minPrice: minPrice ? Number(minPrice) : undefined,
                 maxPrice: maxPrice ? Number(maxPrice) : undefined,
